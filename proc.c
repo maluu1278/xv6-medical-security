@@ -7,6 +7,7 @@
 #include "proc.h"
 #include "spinlock.h"
 
+
 struct {
   struct spinlock lock;
   struct proc proc[NPROC];
@@ -88,6 +89,9 @@ allocproc(void)
 found:
   p->state = EMBRYO;
   p->pid = nextpid++;
+  p->uid = 0;
+  p->gid = 0;
+  
 
   release(&ptable.lock);
 
@@ -531,4 +535,19 @@ procdump(void)
     }
     cprintf("\n");
   }
+}
+
+int
+authenticate(char *user, char *pass)
+{
+  if(strncmp(user, "admin", 5) == 0 && strncmp(pass, "admin123", 8) == 0)
+    return 0;
+
+  if(strncmp(user, "doctor", 6) == 0 && strncmp(pass, "doctor123", 9) == 0)
+    return 2;
+
+  if(strncmp(user, "patient", 7) == 0 && strncmp(pass, "patient123", 10) == 0)
+    return 1;
+
+  return -1;
 }
