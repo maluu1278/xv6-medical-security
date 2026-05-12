@@ -183,6 +183,8 @@ UPROGS=\
 	_zombie\
         _whoami\
         _login\
+        _useradd\
+
 
 fs.img: mkfs README $(UPROGS)
 	./mkfs fs.img README $(UPROGS)

@@ -537,17 +537,48 @@ procdump(void)
   }
 }
 
+struct useraccount {
+  char username[20];
+  char password[20];
+  int uid;
+};
+
+struct useraccount users[10] = {
+  {"admin", "admin123", 0},
+  {"doctor", "doctor123", 2},
+  {"patient", "patient123", 1},
+};
+
+int total_users = 3;
+
 int
 authenticate(char *user, char *pass)
 {
-  if(strncmp(user, "admin", 5) == 0 && strncmp(pass, "admin123", 8) == 0)
-    return 0;
+  int i;
 
-  if(strncmp(user, "doctor", 6) == 0 && strncmp(pass, "doctor123", 9) == 0)
-    return 2;
-
-  if(strncmp(user, "patient", 7) == 0 && strncmp(pass, "patient123", 10) == 0)
-    return 1;
+  for(i = 0; i < total_users; i++){
+    if(strncmp(user, users[i].username, 20) == 0 &&
+       strncmp(pass, users[i].password, 20) == 0){
+      return users[i].uid;
+    }
+  }
 
   return -1;
+}
+
+
+int
+adduser(char *user, char *pass, int uid)
+{
+  if(total_users >= 10)
+    return -1;
+
+  safestrcpy(users[total_users].username, user, 20);
+  safestrcpy(users[total_users].password, pass, 20);
+
+  users[total_users].uid = uid;
+
+  total_users++;
+
+  return 0;
 }

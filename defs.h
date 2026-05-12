@@ -190,3 +190,4 @@ void            clearpteu(pde_t *pgdir, char *uva);
 #define NELEM(x) (sizeof(x)/sizeof((x)[0]))
 
 int authenticate(char *user, char *pass);
+int adduser(char *user, char *pass, int uid);

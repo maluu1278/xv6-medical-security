@@ -95,3 +95,24 @@ sys_whoami(void)
 {
   return myproc()->uid;
 }
+
+
+
+int
+sys_adduser(void)
+{
+  char *u;
+  char *p;
+  int uid;
+
+  if(argstr(0, &u) < 0)
+    return -1;
+
+  if(argstr(1, &p) < 0)
+    return -1;
+
+  if(argint(2, &uid) < 0)
+    return -1;
+
+  return adduser(u, p, uid);
+}
