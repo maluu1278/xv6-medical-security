@@ -4,6 +4,7 @@
 
 char user[20];
 char pass[20];
+char *argv[] = { "sh", 0 };
 
 int
 main(void)
@@ -43,7 +44,7 @@ else
     printf(1, "Invalid credentials\n");
   }
 
-  exec("sh", 0);
+  exec("sh", argv);
 
   exit();
 }
