@@ -539,26 +539,43 @@ procdump(void)
 
 struct useraccount {
   char username[20];
-  char password[20];
+  int passhash;
   int uid;
 };
 
 struct useraccount users[10] = {
-  {"admin", "admin123", 0},
-  {"doctor", "doctor123", 2},
-  {"patient", "patient123", 1},
+  {"admin", 2090128573, 0},
+  {"doctor", 27998963, 2},
+  {"patient", 1258104484, 1},
 };
 
 int total_users = 3;
 
 int
+hashpass(char *pass)
+{
+  int hash = 5381;
+  int c;
+
+  while((c = *pass++) != 0)
+    hash = ((hash << 5) + hash) + c;
+
+  if(hash < 0)
+    hash = -hash;
+
+  return hash;
+}
+
+
+int
 authenticate(char *user, char *pass)
 {
   int i;
+  int h = hashpass(pass);
 
   for(i = 0; i < total_users; i++){
     if(strncmp(user, users[i].username, 20) == 0 &&
-       strncmp(pass, users[i].password, 20) == 0){
+       users[i].passhash == h){
       return users[i].uid;
     }
   }
@@ -574,7 +591,7 @@ adduser(char *user, char *pass, int uid)
     return -1;
 
   safestrcpy(users[total_users].username, user, 20);
-  safestrcpy(users[total_users].password, pass, 20);
+  users[total_users].passhash = hashpass(pass);
 
   users[total_users].uid = uid;
 
@@ -592,7 +609,7 @@ changepass(char *user, char *newpass)
   for(i = 0; i < total_users; i++){
     if(strncmp(user, users[i].username, 20) == 0){
 
-      safestrcpy(users[i].password, newpass, 20);
+      users[i].passhash = hashpass(newpass);
 
       return 0;
     }
