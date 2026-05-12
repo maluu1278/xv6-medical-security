@@ -5,6 +5,7 @@ struct rtcdate;
 int fork(void);
 int whoami(void);
 int adduser(char*, char*, int);
+int changepass(char*, char*);
 int exit(void) __attribute__((noreturn));
 int wait(void);
 int pipe(int*);

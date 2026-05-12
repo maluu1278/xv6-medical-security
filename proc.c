@@ -582,3 +582,21 @@ adduser(char *user, char *pass, int uid)
 
   return 0;
 }
+
+
+int
+changepass(char *user, char *newpass)
+{
+  int i;
+
+  for(i = 0; i < total_users; i++){
+    if(strncmp(user, users[i].username, 20) == 0){
+
+      safestrcpy(users[i].password, newpass, 20);
+
+      return 0;
+    }
+  }
+
+  return -1;
+}

@@ -22,3 +22,4 @@
 #define SYS_close  21
 #define SYS_whoami 22
 #define SYS_adduser 23
+#define SYS_changepass 24

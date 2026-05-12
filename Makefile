@@ -184,6 +184,7 @@ UPROGS=\
         _whoami\
         _login\
         _useradd\
+        _passwd\
 
 
 fs.img: mkfs README $(UPROGS)

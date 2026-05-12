@@ -116,3 +116,19 @@ sys_adduser(void)
 
   return adduser(u, p, uid);
 }
+
+
+int
+sys_changepass(void)
+{
+  char *u;
+  char *p;
+
+  if(argstr(0, &u) < 0)
+    return -1;
+
+  if(argstr(1, &p) < 0)
+    return -1;
+
+  return changepass(u, p);
+}

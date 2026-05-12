@@ -191,3 +191,4 @@ void            clearpteu(pde_t *pgdir, char *uva);
 
 int authenticate(char *user, char *pass);
 int adduser(char *user, char *pass, int uid);
+int changepass(char *user, char *newpass);
