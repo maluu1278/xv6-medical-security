@@ -185,6 +185,7 @@ UPROGS=\
         _login\
         _useradd\
         _passwd\
+        _userdel\
 
 
 fs.img: mkfs README $(UPROGS)

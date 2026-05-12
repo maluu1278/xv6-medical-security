@@ -23,3 +23,4 @@
 #define SYS_whoami 22
 #define SYS_adduser 23
 #define SYS_changepass 24
+#define SYS_deluser 25

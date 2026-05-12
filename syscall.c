@@ -106,6 +106,8 @@ extern int sys_whoami(void);
 extern int sys_uptime(void);
 extern int sys_adduser(void);
 extern int sys_changepass(void);
+extern int sys_deluser(void);
+
 
 static int (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,
@@ -132,6 +134,7 @@ static int (*syscalls[])(void) = {
 [SYS_close]   sys_close,
 [SYS_adduser] sys_adduser,
 [SYS_changepass] sys_changepass,
+[SYS_deluser] sys_deluser,
 
 };
 

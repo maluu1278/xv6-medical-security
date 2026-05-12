@@ -132,3 +132,15 @@ sys_changepass(void)
 
   return changepass(u, p);
 }
+
+
+int
+sys_deluser(void)
+{
+  char *u;
+
+  if(argstr(0, &u) < 0)
+    return -1;
+
+  return deluser(u);
+}

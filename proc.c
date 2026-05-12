@@ -600,3 +600,22 @@ changepass(char *user, char *newpass)
 
   return -1;
 }
+
+
+int
+deluser(char *user)
+{
+  int i, j;
+
+  for(i = 0; i < total_users; i++){
+    if(strncmp(user, users[i].username, 20) == 0){
+      for(j = i; j < total_users - 1; j++){
+        users[j] = users[j + 1];
+      }
+      total_users--;
+      return 0;
+    }
+  }
+
+  return -1;
+}
