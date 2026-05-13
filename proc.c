@@ -88,6 +88,7 @@ allocproc(void)
 found:
   p->state = EMBRYO;
   p->pid = nextpid++;
+  p->uid = 1;
 
   release(&ptable.lock);
 
@@ -149,6 +150,7 @@ userinit(void)
   acquire(&ptable.lock);
 
   p->state = RUNNABLE;
+  p->uid = 0;
 
   release(&ptable.lock);
 }
