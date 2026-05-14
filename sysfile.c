@@ -15,7 +15,36 @@
 #include "sleeplock.h"
 #include "file.h"
 #include "fcntl.h"
-
+extern struct proc* myproc(void);
+// Permission checking helper
+// access_type: 0=read, 1=write, 2=execute
+static int
+has_permission(struct inode *ip, int access_type)
+{ if(access_type == 1){  // write access
+    if(ip->mode == 0444)  // read-only mode
+      return 0;  // deny write
+  }
+  return 1;  // allow everything else
+}
+/*
+  uint mode = ip->mode;
+  uint owner_perm = (mode >> 6) & 7;  // Bits 6-8 (owner)
+  uint other_perm = mode & 7;          // Bits 0-2 (others)
+  
+  // Admin (uid=0) has full access to everything
+  if(myproc()->uid == 0)
+    return 1;
+  
+  // Check if current user is the owner
+  if(myproc()->uid == ip->uid){
+    // Check owner permission bit
+    return (owner_perm >> access_type) & 1;
+  } else {
+    // Check other permission bit
+    return (other_perm >> access_type) & 1;
+  }
+}
+*/
 // Fetch the nth word-sized system call argument as a file descriptor
 // and return both the descriptor and the corresponding struct file.
 static int
@@ -75,6 +104,14 @@ sys_read(void)
 
   if(argfd(0, 0, &f) < 0 || argint(2, &n) < 0 || argptr(1, &p, n) < 0)
     return -1;
+ if(f->type == FD_INODE){
+    ilock(f->ip);
+    if(!has_permission(f->ip, 0)){  // 0 = read permission
+      iunlock(f->ip);
+      return -1;
+    }
+    iunlock(f->ip);
+  }
   return fileread(f, p, n);
 }
 
@@ -87,6 +124,14 @@ sys_write(void)
 
   if(argfd(0, 0, &f) < 0 || argint(2, &n) < 0 || argptr(1, &p, n) < 0)
     return -1;
+ if(f->type == FD_INODE){
+    ilock(f->ip);
+    if(!has_permission(f->ip, 1)){  // 1 = write permission
+      iunlock(f->ip);
+      return -1;
+    }
+    iunlock(f->ip);
+  }
   return filewrite(f, p, n);
 }
 
@@ -312,6 +357,22 @@ sys_open(void)
       end_op();
       return -1;
     }
+  if(omode & O_WRONLY || omode & O_RDWR){
+    // Need write permission
+    if(!has_permission(ip, 1)){
+      iunlockput(ip);
+      end_op();
+      return -1;
+    }
+  }
+  if(omode & O_RDONLY || omode & O_RDWR){
+    // Need read permission
+    if(!has_permission(ip, 0)){
+      iunlockput(ip);
+      end_op();
+      return -1;
+    }
+  }
   }
 
   if((f = filealloc()) == 0 || (fd = fdalloc(f)) < 0){
@@ -399,10 +460,27 @@ sys_exec(void)
   char *path, *argv[MAXARG];
   int i;
   uint uargv, uarg;
+    struct inode *ip;  
 
   if(argstr(0, &path) < 0 || argint(1, (int*)&uargv) < 0){
     return -1;
   }
+ // ===== ADD PERMISSION CHECK START =====
+    begin_op();
+    ip = namei(path);
+    if(ip == 0){
+        end_op();
+        return -1;
+    }
+    ilock(ip);
+    if(!has_permission(ip, 2)){  // 2 = execute permission
+        iunlockput(ip);
+        end_op();
+        return -1;
+    }
+    iunlockput(ip);
+    end_op();
+
   memset(argv, 0, sizeof(argv));
   for(i=0;; i++){
     if(i >= NELEM(argv))

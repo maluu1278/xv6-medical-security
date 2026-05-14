@@ -21,7 +21,7 @@ OBJS = \
 	swtch.o\
 	syscall.o\
 	sysfile.o\
-	sysproc.o\
+        sysproc.o\
 	trapasm.o\
 	trap.o\
 	uart.o\
@@ -178,6 +178,9 @@ UPROGS=\
 	_rm\
 	_sh\
         _test_chown\
+	_test_permissions\
+        _test_perms\
+	_stressfs\
         _uidtest\
 	_stressfs\
 	_usertests\
