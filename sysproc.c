@@ -1,11 +1,22 @@
 #include "types.h"
-#include "x86.h"
 #include "defs.h"
 #include "date.h"
 #include "param.h"
 #include "memlayout.h"
 #include "mmu.h"
+#include "x86.h"
 #include "proc.h"
+#include "spinlock.h"
+#include "sleeplock.h"
+#include "fs.h"
+#include "file.h"
+// Function prototypes
+extern int argstr(int n, char **p);
+extern int argint(int n, int *p);
+extern void begin_op(void);
+extern void end_op(void);
+struct inode* namei(char *path);
+void iupdate(struct inode *ip);
 
 int
 sys_fork(void)
@@ -95,3 +106,62 @@ sys_uptime(void)
   release(&tickslock);
   return xticks;
 }
+int
+sys_chown(void)
+{
+  char *path;
+  int uid, gid;
+  struct inode *ip;
+  
+  if(argstr(0, &path) < 0 || argint(1, &uid) < 0 || argint(2, &gid) < 0)
+    return -1;
+  
+  begin_op();  // ADD THIS
+  
+  ip = namei(path);
+  if(ip == 0){
+    end_op();  // ADD THIS
+    return -1;
+  }
+  
+  ilock(ip);
+  ip->uid = uid;
+  ip->gid = gid;
+  iupdate(ip);
+  iunlock(ip);
+  iput(ip);
+  
+  end_op();  // ADD THIS
+  
+  return 0;
+}
+
+int
+sys_chmod(void)
+{
+  char *path;
+  int mode;
+  struct inode *ip;
+  
+  if(argstr(0, &path) < 0 || argint(1, &mode) < 0)
+    return -1;
+  
+  begin_op();  // ADD THIS
+  
+  ip = namei(path);
+  if(ip == 0){
+    end_op();  // ADD THIS
+    return -1;
+  }
+  
+  ilock(ip);
+  ip->mode = mode;
+  iupdate(ip);
+  iunlock(ip);
+  iput(ip);
+  
+  end_op();  // ADD THIS
+  
+  return 0;
+}
+
