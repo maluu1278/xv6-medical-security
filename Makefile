@@ -180,6 +180,7 @@ UPROGS=\
         _test_chown\
 	_test_permissions\
         _test_perms\
+        _test_admin\
 	_stressfs\
         _uidtest\
 	_stressfs\
