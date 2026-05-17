@@ -8,6 +8,19 @@
 #include "traps.h"
 #include "spinlock.h"
 
+#define AUDIT_SIZE 64
+
+struct audit_entry {
+  int pid;
+  int uid;
+  int trapno;
+  uint tick;
+};
+
+struct audit_entry audit_buffer[AUDIT_SIZE];
+int audit_index = 0; 
+
+
 // Interrupt descriptor table (shared by all CPUs).
 struct gatedesc idt[256];
 extern uint vectors[];  // in vectors.S: array of 256 entry pointers
@@ -32,6 +45,22 @@ idtinit(void)
   lidt(idt, sizeof(idt));
 }
 
+
+
+void
+audit_log(int pid, int uid, int trapno)
+{
+  audit_buffer[audit_index].pid = pid;
+  audit_buffer[audit_index].uid = uid;
+  audit_buffer[audit_index].trapno = trapno;
+  audit_buffer[audit_index].tick = ticks;
+
+  audit_index = (audit_index + 1) % AUDIT_SIZE;
+}
+
+
+
+
 //PAGEBREAK: 41
 void
 trap(struct trapframe *tf)
@@ -41,7 +70,12 @@ trap(struct trapframe *tf)
   cprintf("TRAP: pid=%d uid=%d trap=T_SYSCALL eip=%x\n",
           myproc()->pid, myproc()->uid, tf->eip);
 
-    if(myproc()->killed)
+if(myproc())
+  audit_log(myproc()->pid, myproc()->uid, tf->trapno);   
+
+
+
+ if(myproc()->killed)
       exit();
     myproc()->tf = tf;
     syscall();

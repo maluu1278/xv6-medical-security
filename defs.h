@@ -120,6 +120,7 @@ void            userinit(void);
 int             wait(void);
 void            wakeup(void*);
 void            yield(void);
+void audit_log(int pid, int uid, int trapno);
 
 // swtch.S
 void            swtch(struct context**, struct context*);
