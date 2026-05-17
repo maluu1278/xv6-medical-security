@@ -186,6 +186,7 @@ UPROGS=\
         _useradd\
         _passwd\
         _userdel\
+        _auditread\
 
 
 fs.img: mkfs README passwdfile $(UPROGS)

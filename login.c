@@ -37,6 +37,7 @@ else
   uid = -1;
 
     if(uid >= 0){
+      setuid(uid);
       printf(1, "Login successful. UID=%d\n", uid);
       break;
     }

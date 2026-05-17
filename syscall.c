@@ -107,6 +107,8 @@ extern int sys_uptime(void);
 extern int sys_adduser(void);
 extern int sys_changepass(void);
 extern int sys_deluser(void);
+extern int sys_auditread(void);
+extern int sys_setuid(void);
 
 
 static int (*syscalls[])(void) = {
@@ -135,6 +137,8 @@ static int (*syscalls[])(void) = {
 [SYS_adduser] sys_adduser,
 [SYS_changepass] sys_changepass,
 [SYS_deluser] sys_deluser,
+[SYS_auditread] sys_auditread,
+[SYS_setuid] sys_setuid,
 
 };
 

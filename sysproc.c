@@ -144,3 +144,45 @@ sys_deluser(void)
 
   return deluser(u);
 }
+
+
+
+
+int
+sys_auditread(void)
+{
+  int i;
+
+  cprintf("CURRENT UID = %d\n", myproc()->uid);
+
+  if(myproc()->uid != 0){
+    cprintf("Access denied: admin only\n");
+    return -1;
+  }
+
+  for(i = 0; i < AUDIT_SIZE; i++){
+    cprintf("LOG pid=%d uid=%d trap=%d tick=%d\n",
+      audit_buffer[i].pid,
+      audit_buffer[i].uid,
+      audit_buffer[i].trapno,
+      audit_buffer[i].tick);
+  }
+
+  return 0;
+}
+
+
+
+int
+sys_setuid(void)
+{
+  int uid;
+
+  if(argint(0, &uid) < 0)
+    return -1;
+
+  myproc()->uid = uid;
+  myproc()->gid = uid;
+
+  return 0;
+}

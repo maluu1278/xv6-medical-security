@@ -24,3 +24,5 @@
 #define SYS_adduser 23
 #define SYS_changepass 24
 #define SYS_deluser 25
+#define SYS_auditread 26
+#define SYS_setuid 27

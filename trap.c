@@ -8,14 +8,6 @@
 #include "traps.h"
 #include "spinlock.h"
 
-#define AUDIT_SIZE 64
-
-struct audit_entry {
-  int pid;
-  int uid;
-  int trapno;
-  uint tick;
-};
 
 struct audit_entry audit_buffer[AUDIT_SIZE];
 int audit_index = 0; 

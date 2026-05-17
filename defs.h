@@ -160,6 +160,19 @@ void            syscall(void);
 // timer.c
 void            timerinit(void);
 
+#define AUDIT_SIZE 64
+
+struct audit_entry {
+  int pid;
+  int uid;
+  int trapno;
+  uint tick;
+};
+
+extern struct audit_entry audit_buffer[AUDIT_SIZE];
+
+
+
 // trap.c
 void            idtinit(void);
 extern uint     ticks;
@@ -194,3 +207,4 @@ int authenticate(char *user, char *pass);
 int adduser(char *user, char *pass, int uid);
 int changepass(char *user, char *newpass);
 int deluser(char *user);
+int sys_auditread(void);

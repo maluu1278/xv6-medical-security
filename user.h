@@ -7,6 +7,8 @@ int whoami(void);
 int adduser(char*, char*, int);
 int changepass(char*, char*);
 int deluser(char*);
+int auditread(void);
+int setuid(int);
 int exit(void) __attribute__((noreturn));
 int wait(void);
 int pipe(int*);
