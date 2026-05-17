@@ -37,6 +37,10 @@ void
 trap(struct trapframe *tf)
 {
   if(tf->trapno == T_SYSCALL){
+    if(myproc() && myproc()->pid > 2)
+  cprintf("TRAP: pid=%d uid=%d trap=T_SYSCALL eip=%x\n",
+          myproc()->pid, myproc()->uid, tf->eip);
+
     if(myproc()->killed)
       exit();
     myproc()->tf = tf;
